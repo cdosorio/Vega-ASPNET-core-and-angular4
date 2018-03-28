@@ -10,7 +10,7 @@ namespace vega.Models
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
-        public ICollection<Model> Models { get; set; } //una diferencia con List es que este último permite acceder por indice, lo que acá no será necesario    
+        public ICollection<Model> Models { get; set; }
 
     public Make()
     {
