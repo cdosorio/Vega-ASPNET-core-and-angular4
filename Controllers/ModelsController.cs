@@ -24,10 +24,10 @@ namespace vega.Controllers
         }
 
         [HttpGet("/api/models")]
-        public async Task<IEnumerable<ModelResource>> GetModels()
+        public async Task<IEnumerable<KeyValuePairResource>> GetModels()
         {
             var models = await context.Models.ToListAsync();
-            return mapper.Map<List<Model>, List<ModelResource>>(models);
+            return mapper.Map<List<Model>, List<KeyValuePairResource>>(models);
         }                
     }
 }
