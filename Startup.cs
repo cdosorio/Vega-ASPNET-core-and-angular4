@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using vega.Core;
 using vega.Persistence;
 
 namespace vega
@@ -25,6 +26,17 @@ namespace vega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Repository permite :
+            //1) aislar lo que puede cambiar a futuro (el ORM). Los controllers consultan al repository, ya no tienen referencias a dbContext.
+            //2) evitar duplicar código. Las queries quedan encapsuladas en una sola clase. 
+            //--Para asegurarse de que no se puedan hacer queries fuera del repository, nunca debe devolver Iqueryable.
+            //
+            //Es equivalente a un List (lista de objetos en memoria), por lo tanto no debe tener Save ni Update.
+            services.AddScoped<IVehicleRepository,VehicleRepository>();
+
+            //Es complementario al Repository. Se encarga de Save y Update.
+            services.AddScoped<IUnitOfWork,UnitOfWork>();
+
             services.AddAutoMapper();
             services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddMvc();
