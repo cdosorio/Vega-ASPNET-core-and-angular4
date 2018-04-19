@@ -9,9 +9,10 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true, // Workaround for https://github.com/angular/angular/issues/17863. Remove this if you upgrade to a fixed version of Angular.
     "strict": true,
-    "lib": [ "es6", "dom" ],
+    "lib": [ "es6", "dom","es2016.array.include" ],
     "types": [ "webpack-env" ],
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "strictNullChecks": false
   },
   "exclude": [ "bin", "node_modules" ],
   "atom": { "rewriteTsconfig": false }
