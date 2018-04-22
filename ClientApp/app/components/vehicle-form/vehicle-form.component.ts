@@ -9,8 +9,7 @@ import { SaveVehicle, Vehicle } from '../../models/vehicle';
 
 @Component({
     selector: "app-vehicle-form",
-    templateUrl: "./vehicle-form.component.html",
-    styleUrls: ["./vehicle-form.component.css"]
+    templateUrl: "./vehicle-form.component.html"
 })
 export class VehicleFormComponent implements OnInit {
     makes: any[] = [];
@@ -36,7 +35,8 @@ export class VehicleFormComponent implements OnInit {
         private toastyService: ToastyService
     ) {
         route.paramMap.subscribe(p => {
-            if (p.get("id")) this.vehicle.id = +p.get("id"); //+ convierte en numero
+            //if (p.get("id")) this.vehicle.id = +p.get("id");
+            this.vehicle.id = +p['id'] || 0; // class 118
         });
     }
 
@@ -91,30 +91,16 @@ export class VehicleFormComponent implements OnInit {
     }
 
     submit() {
-        if (this.vehicle.id) {
-            this.vehicleService.update(this.vehicle)
-                .subscribe(x => {
-                    this.toastyService.success({
-                        title: "Success",
-                        msg: "Vehicle updated",
-                        theme: "bootstrap",
-                        showClose: true,
-                        timeout: 5000
-                    });
-                });
-        }
-        else {
-            this.vehicleService.create(this.vehicle)
-                    .subscribe(x => console.log(x));
-        }
-    }
-
-    delete() {
-        if (confirm("Are you sure?")) {
-            this.vehicleService.delete(this.vehicle.id)
-                .subscribe(x => {
-                    this.router.navigate(['/home']);
-                });
-        }
-    }
+        var result$ = (this.vehicle.id) ? this.vehicleService.update(this.vehicle) : this.vehicleService.create(this.vehicle); 
+        result$.subscribe(vehicle => {
+          this.toastyService.success({
+            title: 'Success', 
+            msg: 'Data was sucessfully saved.',
+            theme: 'bootstrap',
+            showClose: true,
+            timeout: 5000
+          });
+          this.router.navigate(['/vehicles/', vehicle.id])
+        });
+    }    
 }

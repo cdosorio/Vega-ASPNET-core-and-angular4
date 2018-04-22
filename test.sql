@@ -5,6 +5,7 @@ SELECT * from Features
 
 --setx ASPNETCORE_ENVIRONMENT "Development"
 --dotnet watch run
+--ng g c components/shared/pagination --module=app.shared.module.ts --flat=0
 
 
 
