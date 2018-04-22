@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using vega.Core;
+using vega.Core.Models;
 using vega.Persistence;
 
 namespace vega
@@ -26,6 +27,8 @@ namespace vega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<PhotoSettings>(Configuration.GetSection("PhotoSettings"));
+
             //Repository permite :
             //1) aislar lo que puede cambiar a futuro (el ORM). Los controllers consultan al repository, ya no tienen referencias a dbContext.
             //2) evitar duplicar código. Las queries quedan encapsuladas en una sola clase. 

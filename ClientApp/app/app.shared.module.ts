@@ -21,6 +21,7 @@ import { VehicleService } from './services/vehicle.service';
 
 //Utils
 import { AppErrorHandler } from './app.error-handler';
+import { PhotoService } from './services/photo.service';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { AppErrorHandler } from './app.error-handler';
     ],
     providers: [
         { provide: ErrorHandler, useClass: AppErrorHandler},
-        VehicleService
+        VehicleService,
+        PhotoService
     ]
 })
 export class AppModuleShared {
