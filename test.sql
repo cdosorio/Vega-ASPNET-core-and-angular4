@@ -7,6 +7,8 @@ SELECT * from Features
 --dotnet watch run
 --ng g c components/shared/pagination --module=app.shared.module.ts --flat=0
 
+--webpack --config webpack.config.vendor.js
+
 
 
 

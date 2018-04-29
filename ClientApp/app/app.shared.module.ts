@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { ToastyModule } from "ng2-toasty";
+import { BrowserXhr } from '@angular/http';
+import { BrowserXhrWithProgress, ProgressService } from './services/progress.service';
 
 //Components
 import { AppComponent } from './components/app/app.component';
@@ -18,10 +20,11 @@ import { ViewVehicleComponent } from './components/view-vehicle/view-vehicle.com
 
 //Services
 import { VehicleService } from './services/vehicle.service';
+import { PhotoService } from './services/photo.service';
+import { AuthService } from './services/auth.service';
 
 //Utils
 import { AppErrorHandler } from './app.error-handler';
-import { PhotoService } from './services/photo.service';
 
 
 @NgModule({
@@ -55,8 +58,11 @@ import { PhotoService } from './services/photo.service';
     ],
     providers: [
         { provide: ErrorHandler, useClass: AppErrorHandler},
+        { provide: BrowserXhr, useClass: BrowserXhrWithProgress },
         VehicleService,
-        PhotoService
+        PhotoService,
+        ProgressService,
+        AuthService
     ]
 })
 export class AppModuleShared {

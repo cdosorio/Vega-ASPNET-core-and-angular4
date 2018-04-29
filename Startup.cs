@@ -1,8 +1,9 @@
-   using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -35,14 +36,27 @@ namespace vega
             //--Para asegurarse de que no se puedan hacer queries fuera del repository, nunca debe devolver Iqueryable.
             //
             //Es equivalente a un List (lista de objetos en memoria), por lo tanto no debe tener Save ni Update.
-            services.AddScoped<IVehicleRepository,VehicleRepository>();
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
 
             //Es complementario al Repository. Se encarga de Save y Update.
-            services.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper();
             services.AddDbContext<VegaDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddMvc();
+
+            // 1. Add Authentication Services
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = "https://cdosorio.auth0.com/";
+                options.Audience = "https://api.vega.com";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +76,9 @@ namespace vega
             }
 
             app.UseStaticFiles();
+
+            // 2. Enable authentication middleware
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

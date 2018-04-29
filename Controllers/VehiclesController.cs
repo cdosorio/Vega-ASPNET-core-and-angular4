@@ -7,6 +7,7 @@ using vega.Controllers.Resources;
 using vega.Core;
 using System.Collections.Generic;
 using vega.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace vega.Controllers
 {
@@ -27,6 +28,7 @@ namespace vega.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateVehicle([FromBody]SaveVehicleResource saveVehicleResource)
         {            
             //Input validation
@@ -62,6 +64,7 @@ namespace vega.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateVehicle(int id, [FromBody]SaveVehicleResource vehicleResource)
         {
             //Input validation
@@ -87,6 +90,7 @@ namespace vega.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteVehicle(int id)
         {
             var vehicle = await repository.GetVehicle(id, includeRelated: false);
