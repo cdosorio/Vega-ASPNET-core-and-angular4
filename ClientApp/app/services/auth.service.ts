@@ -4,10 +4,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operator/filter';
 import * as auth0 from 'auth0-js';
+import { JwtHelper } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
   userProfile: any;
+  private roles: string[] = [];
 
   auth0 = new auth0.WebAuth({
     clientID: 'OKFvE1I8Jz258LXblqRGRsPkpYS8V1CM',
@@ -15,11 +17,20 @@ export class AuthService {
     responseType: 'token id_token',
     audience: 'https://cdosorio.auth0.com/userinfo',
     redirectUri: 'http://localhost:5000/vehicles',
-    scope: 'openid profile'
+    scope: 'openid profile email'
   });
 //audience: 'https://api.vega.com',
 
-  constructor(public router: Router) {}
+  constructor(public router: Router) {
+    this.userProfile = JSON.parse(localStorage.getItem('profile'));
+    
+    var token = localStorage.getItem('access_token');
+    if (token){
+      var jwtHelper = new JwtHelper();
+      var decodedToken = jwtHelper.decodeToken(token);
+      this.roles = decodedToken['http://vega.com/roles'];
+    }
+  }
 
   public login(): void {
     this.auth0.authorize();
@@ -30,9 +41,11 @@ export class AuthService {
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
 
-        // this.getProfile((err,profile))=> {
-        //   this.userProfile = profile;
-        // });
+        this.getProfile(authResult.accessToken, (err,profile) => {
+          
+          localStorage.setItem('profile', JSON.stringify(this.userProfile));
+          this.userProfile = profile;
+        });
 
         this.setSession(authResult);        
         this.router.navigate(['/vehicles']);
@@ -49,6 +62,10 @@ export class AuthService {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
+
+    var jwtHelper = new JwtHelper();
+    var decodedToken = jwtHelper.decodeToken(authResult.accessToken);
+    this.roles = decodedToken['http://vega.com/roles'];
   }
 
   public logout(): void {
@@ -56,6 +73,9 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+    localStorage.removeItem('profile');
+    this.userProfile = null;
+    this.roles = [];
     // Go back to the home route
     this.router.navigate(['/']);
   }
@@ -67,8 +87,8 @@ export class AuthService {
     return new Date().getTime() < expiresAt;
   }
 
-  public getProfile(cb): void {
-    const accessToken = localStorage.getItem('access_token');
+  public getProfile(accessToken, cb): void {
+    //const accessToken = localStorage.getItem('access_token');
     if (!accessToken) {
       throw new Error('Access token must exist to fetch profile');
     }
@@ -80,6 +100,10 @@ export class AuthService {
       }
       cb(err, profile);
     });
+  }
+
+  public isInRole(roleName){
+    return this.roles.indexOf(roleName) > -1
   }
 
 }

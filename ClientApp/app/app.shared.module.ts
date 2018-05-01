@@ -17,6 +17,7 @@ import { VehicleFormComponent } from './components/vehicle-form/vehicle-form.com
 import { VehicleListComponent } from './components/vehicle-list/vehicle-list';
 import { PaginationComponent } from './components/shared/pagination.component';
 import { ViewVehicleComponent } from './components/view-vehicle/view-vehicle.component';
+import { AdminComponent } from './components/admin/admin.component';
 
 //Services
 import { VehicleService } from './services/vehicle.service';
@@ -25,6 +26,7 @@ import { AuthService } from './services/auth.service';
 
 //Utils
 import { AppErrorHandler } from './app.error-handler';
+
 
 
 @NgModule({
@@ -37,7 +39,8 @@ import { AppErrorHandler } from './app.error-handler';
         VehicleFormComponent,
         VehicleListComponent,
         PaginationComponent,
-        ViewVehicleComponent
+        ViewVehicleComponent,
+        AdminComponent
     ],
     imports: [
         CommonModule,
@@ -50,6 +53,7 @@ import { AppErrorHandler } from './app.error-handler';
             { path: 'vehicles/edit/:id', component: VehicleFormComponent },
             { path: 'vehicles/:id', component: ViewVehicleComponent },
             { path: 'vehicles', component: VehicleListComponent },
+            { path: 'admin', component: AdminComponent },
             { path: 'home', component: HomeComponent },
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent },
