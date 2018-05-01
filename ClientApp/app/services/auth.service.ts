@@ -7,15 +7,17 @@ import * as auth0 from 'auth0-js';
 
 @Injectable()
 export class AuthService {
+  userProfile: any;
 
   auth0 = new auth0.WebAuth({
     clientID: 'OKFvE1I8Jz258LXblqRGRsPkpYS8V1CM',
     domain: 'cdosorio.auth0.com',
     responseType: 'token id_token',
     audience: 'https://cdosorio.auth0.com/userinfo',
-    redirectUri: 'http://localhost:5000/callback',
-    scope: 'openid'
+    redirectUri: 'http://localhost:5000/vehicles',
+    scope: 'openid profile'
   });
+//audience: 'https://api.vega.com',
 
   constructor(public router: Router) {}
 
@@ -23,12 +25,17 @@ export class AuthService {
     this.auth0.authorize();
   }
 
-  public handleAuthentication(): void {
+  public handleAuthentication(): void {    
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
-        this.setSession(authResult);
-        this.router.navigate(['/home']);
+
+        // this.getProfile((err,profile))=> {
+        //   this.userProfile = profile;
+        // });
+
+        this.setSession(authResult);        
+        this.router.navigate(['/vehicles']);
       } else if (err) {
         this.router.navigate(['/home']);
         console.log(err);
@@ -58,6 +65,21 @@ export class AuthService {
     // Access Token's expiry time
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
+  }
+
+  public getProfile(cb): void {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      throw new Error('Access token must exist to fetch profile');
+    }
+
+    const self = this;
+    this.auth0.client.userInfo(accessToken, (err, profile) => {
+      if (profile) {
+        self.userProfile = profile;
+      }
+      cb(err, profile);
+    });
   }
 
 }
